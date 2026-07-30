@@ -1,4 +1,4 @@
-# Georgia Bite
+# Georgia Bites
 
 A React + Vite single-page app that shows real-time, species-specific fishing
 **Bite Scores (0–100)** for **Largemouth Bass, Crappie, and Catfish** across the

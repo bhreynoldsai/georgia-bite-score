@@ -184,7 +184,7 @@ export default function App() {
             <div className="flex items-center gap-3 flex-wrap">
               <GuideAvatar size={72} hideIfMissing />
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-heading uppercase tracking-wider">
-                Georgia <span className="text-accent">Bite</span>
+                Georgia <span className="text-accent">Bites</span>
               </h1>
               <LakeSelector value={lakeId} onChange={setLakeId} />
             </div>

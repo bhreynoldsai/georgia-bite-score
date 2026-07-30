@@ -1,4 +1,4 @@
-# Georgia Bite
+# Georgia Bites
 
 A single-page React app that aggregates real-time environmental and astronomical
 data, runs it through species-specific fishing behavior models, and outputs a

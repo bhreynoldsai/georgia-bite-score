@@ -1,6 +1,6 @@
 {
   "appId": "com.truenorth.georgiabitescore",
-  "appName": "Georgia Bite",
+  "appName": "Georgia Bites",
   "webDir": "dist",
   "ios": {
     "contentInset": "always",
