@@ -18,12 +18,34 @@ catalog with `npx @capacitor/assets generate --ios`. The master icon artwork is
 
 ## One-time setup before submitting
 
-1. **Signing** — in Xcode, select the App target → Signing & Capabilities →
-   choose your Apple Developer team. Bundle ID is `com.truenorth.georgiabitescore`
-   (set in `capacitor.config.json`; change it there and re-sync if needed).
-2. **Version/build numbers** — App target → General.
-3. **Archive & upload** — Product → Archive → Distribute App → App Store
-   Connect. (Or `xcodebuild archive` + `xcrun altool`/Transporter in CI.)
+1. **Signing** — automatic signing is already configured (team `5XV96FMGLV`,
+   bundle ID `com.truenorth.georgiabitescore`, set in `capacitor.config.json`).
+   Cloud-managed distribution signing works headlessly with
+   `-allowProvisioningUpdates`; no distribution cert needs to live in the
+   keychain.
+2. **Version/build numbers** — `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`
+   in `ios/App/App.xcodeproj/project.pbxproj` (currently 1.0 / 1). Bump
+   `CURRENT_PROJECT_VERSION` for every new upload of the same version.
+3. **Create the app record in App Store Connect** — required *before* any
+   upload. `xcodebuild` fails with `missingApp(bundleId:)` if it does not
+   exist. Create it at appstoreconnect.apple.com → Apps → **+** → New App:
+   platform iOS, name, primary language, bundle ID
+   `com.truenorth.georgiabitescore`, and an SKU (e.g. `GABITESCORE001`).
+4. **Archive & upload** (headless, from the repo root):
+
+```bash
+npm run build && npx cap sync ios
+xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+  -destination 'generic/platform=iOS' \
+  -archivePath build/GeorgiaBiteScore.xcarchive archive -allowProvisioningUpdates
+xcodebuild -exportArchive -archivePath build/GeorgiaBiteScore.xcarchive \
+  -exportOptionsPlist build/UploadOptions.plist \
+  -exportPath build/upload -allowProvisioningUpdates
+```
+
+`build/ExportOptions.plist` (`destination: export`) writes `build/ipa/App.ipa`
+locally; `build/UploadOptions.plist` (`destination: upload`) sends the build
+straight to App Store Connect. Both use `method: app-store-connect`.
 
 ## App Store Connect metadata
 
@@ -36,6 +58,14 @@ catalog with `npx @capacitor/assets generate --ios`. The master icon artwork is
   no personal data. Set `ANTHROPIC_API_KEY` in the Vercel project env or the
   panel falls back to canned summaries.
 - **Age rating**: 4+. **Category**: Sports or Weather.
+- **Encryption**: `ITSAppUsesNonExemptEncryption = false` is set in
+  `Info.plist`, so App Store Connect will not ask the export-compliance
+  question on each build.
+- **Screenshots**: `store-assets/screenshots/` holds three 1320×2868 (6.9")
+  captures — dashboard, guide panel, outlook. That size is the only iPhone set
+  Apple requires; it scales them for smaller devices.
+- **App icon**: `public/icon-1024.png` (1024×1024, no alpha) for the ASC
+  listing.
 
 ## Guideline 4.2 ("minimum functionality") risk
 
