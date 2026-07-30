@@ -13,7 +13,7 @@ export default function GuideAvatar({ size = 40, hideIfMissing = false, classNam
 
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-full overflow-hidden border-2 border-accent/70 bg-surface shrink-0 shadow-[0_0_12px_rgba(14,210,210,0.25)] ${className}`}
+      className={`inline-flex items-center justify-center rounded-full overflow-hidden border-2 border-accent/70 bg-surface shrink-0 shadow-[0_0_12px_rgba(186,12,47,0.25)] ${className}`}
       style={{ width: size, height: size }}
     >
       {missing ? (
