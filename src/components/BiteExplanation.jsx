@@ -42,7 +42,7 @@ export default function BiteExplanation({ open, onClose, args }) {
               <p className="text-xs text-body/70">
                 {status === 'streaming' && 'Your guide is thinking…'}
                 {status === 'done' && 'Live read · powered by Anthropic'}
-                {status === 'fallback' && 'Offline summary — live guide unavailable.'}
+                {status === 'fallback' && "The guide's read on today's conditions."}
               </p>
             </div>
           </div>

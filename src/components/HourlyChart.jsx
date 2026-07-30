@@ -74,8 +74,9 @@ export default function HourlyChart({ scores, currentHour, species }) {
               <ReferenceDot
                 key={i}
                 x={data[i].hour}
-                y={data[i].score + 6}
+                y={Math.min(data[i].score + 6, 97)}
                 r={0}
+                ifOverflow="visible"
                 label={{ value: '★', position: 'top', fill: '#facc15', fontSize: 12 }}
               />
             ))}

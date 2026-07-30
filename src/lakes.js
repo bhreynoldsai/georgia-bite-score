@@ -11,25 +11,30 @@
 // below-dam DISCHARGE gauge (param 00060) that reflects generation/current.
 // To add a lake, append an entry here — no other code changes required.
 //
-// Gauge-accuracy notes (verified via USGS monitoring-location pages + live
-// third-party mirrors; NWIS API was unreachable at authoring time, so if a
-// gauge stops returning discharge, re-verify the site at waterdata.usgs.gov):
-//   • hartwell 02187020 and blackshear 02350330 — sanity-check they return live
-//     00060 discharge once reachable; documented alternates existed.
+// Gauge-accuracy notes (every non-null site below was verified LIVE against the
+// NWIS instantaneous-values API — returns current 00060 discharge):
 //   • oconee (Wallace Dam) has NO below-dam river gauge — it discharges through a
 //     tailrace directly into Lake Sinclair — so usgsSite is intentionally null.
+//   • hartwell is null for the same reason: Hartwell Dam's tailwater is Lake
+//     Russell's pool, and NWIS has no active below-dam discharge gauge there
+//     (02187020 returns no live data; 02187010 is a lake-level station).
+//   • clarks-hill 02197000 (Savannah R at Augusta) is ~20 mi below Thurmond Dam
+//     (nearest active discharge gauge); flow is dominated by Thurmond releases
+//     but is smoothed by distance and the run-of-river Stevens Creek Dam.
+//   • west-point 02339402 (below-dam station) publishes stage only, so we use
+//     02339500 (Chattahoochee R at West Point) just downstream for discharge.
 
 export const LAKES = [
   { id: 'lanier',      name: 'Lake Lanier',                          lat: 34.22,  lon: -84.00,   timezone: 'America/New_York', usgsSite: '02334430', dam: 'Buford Dam',              river: 'Chattahoochee River' },
-  { id: 'hartwell',    name: 'Lake Hartwell',                        lat: 34.48,  lon: -82.87,   timezone: 'America/New_York', usgsSite: '02187020', dam: 'Hartwell Dam',            river: 'Savannah River' },
-  { id: 'clarks-hill', name: 'Clarks Hill Lake (J. Strom Thurmond)', lat: 33.83,  lon: -82.36,   timezone: 'America/New_York', usgsSite: '02194501', dam: 'J. Strom Thurmond Dam',   river: 'Savannah River' },
-  { id: 'west-point',  name: 'West Point Lake',                      lat: 33.00,  lon: -85.16,   timezone: 'America/New_York', usgsSite: '02339402', dam: 'West Point Dam',          river: 'Chattahoochee River' },
+  { id: 'hartwell',    name: 'Lake Hartwell',                        lat: 34.48,  lon: -82.87,   timezone: 'America/New_York', usgsSite: null,       dam: 'Hartwell Dam',            river: 'Savannah River' },
+  { id: 'clarks-hill', name: 'Clarks Hill Lake (J. Strom Thurmond)', lat: 33.83,  lon: -82.36,   timezone: 'America/New_York', usgsSite: '02197000', dam: 'J. Strom Thurmond Dam',   river: 'Savannah River' },
+  { id: 'west-point',  name: 'West Point Lake',                      lat: 33.00,  lon: -85.16,   timezone: 'America/New_York', usgsSite: '02339500', dam: 'West Point Dam',          river: 'Chattahoochee River' },
   { id: 'allatoona',   name: 'Lake Allatoona',                       lat: 34.16,  lon: -84.68,   timezone: 'America/New_York', usgsSite: '02394000', dam: 'Allatoona Dam',           river: 'Etowah River' },
   { id: 'oconee',      name: 'Lake Oconee',                          lat: 33.45,  lon: -83.18,   timezone: 'America/New_York', usgsSite: null,       dam: 'Wallace Dam',             river: 'Oconee River' },
-  { id: 'sinclair',    name: 'Lake Sinclair',                        lat: 33.17,  lon: -83.28,   timezone: 'America/New_York', usgsSite: '02222510', dam: 'Sinclair Dam',            river: 'Oconee River' },
+  { id: 'sinclair',    name: 'Lake Sinclair',                        lat: 33.17,  lon: -83.28,   timezone: 'America/New_York', usgsSite: '02223000', dam: 'Sinclair Dam',            river: 'Oconee River' },
   { id: 'eufaula',     name: 'Lake Walter F. George (Eufaula)',      lat: 31.8950, lon: -85.1200, timezone: 'America/New_York', usgsSite: '02343801', dam: 'Walter F. George Dam',    river: 'Chattahoochee River' },
   { id: 'seminole',    name: 'Lake Seminole',                        lat: 30.78,  lon: -84.88,   timezone: 'America/New_York', usgsSite: '02358000', dam: 'Jim Woodruff Dam',        river: 'Apalachicola River' },
-  { id: 'blackshear',  name: 'Lake Blackshear',                      lat: 31.92,  lon: -83.96,   timezone: 'America/New_York', usgsSite: '02350330', dam: 'Crisp County (Warwick) Dam', river: 'Flint River' },
+  { id: 'blackshear',  name: 'Lake Blackshear',                      lat: 31.92,  lon: -83.96,   timezone: 'America/New_York', usgsSite: '02350512', dam: 'Crisp County (Warwick) Dam', river: 'Flint River' },
   { id: 'jackson',     name: 'Lake Jackson',                         lat: 33.32,  lon: -83.85,   timezone: 'America/New_York', usgsSite: '02210500', dam: 'Lloyd Shoals Dam',        river: 'Ocmulgee River' },
   { id: 'carters',     name: 'Carters Lake',                         lat: 34.61,  lon: -84.65,   timezone: 'America/New_York', usgsSite: '02382500', dam: 'Carters Dam',             river: 'Coosawattee River' },
 ];

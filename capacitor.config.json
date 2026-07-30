@@ -1,0 +1,9 @@
+{
+  "appId": "com.truenorth.georgiabitescore",
+  "appName": "Georgia Bite Score",
+  "webDir": "dist",
+  "ios": {
+    "contentInset": "always",
+    "backgroundColor": "#0b0b0d"
+  }
+}

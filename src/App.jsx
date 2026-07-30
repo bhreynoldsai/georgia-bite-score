@@ -167,7 +167,7 @@ export default function App() {
       { name: 'Cloud Cover',   value: fmt(derived.clouds, '%'),           status: derived.clouds > 75 ? 'Favorable' : 'Neutral' },
       { name: 'Pressure',      value: `${fmt(derived.pressure, ' mb')} (${derived.baro.trend})`, status: derived.baro.trend === 'stable' || derived.baro.trend === 'rising' ? 'Favorable' : 'Unfavorable' },
       { name: 'Precipitation', value: `${derived.precip?.toFixed(2) ?? '0.00'} in/hr`, status: derived.precip >= 0.05 && derived.precip <= 0.20 ? 'Favorable' : derived.precip > 0.5 ? 'Unfavorable' : 'Neutral' },
-      { name: 'Inflow',        value: gauge.data?.discharge != null ? `${Math.round(gauge.data.discharge)} cfs (${derived.inflowClass})` : '--', status: derived.inflowClass === 'Normal' || derived.inflowClass === 'High' ? 'Favorable' : derived.inflowClass === 'Flood/Turbid' ? 'Unfavorable' : 'Neutral' },
+      { name: 'Inflow',        value: gauge.data?.discharge != null ? `${Math.round(gauge.data.discharge)} cfs (${derived.inflowClass})` : '-- (assumed Normal)', status: gauge.data?.discharge == null ? 'Neutral' : derived.inflowClass === 'Normal' || derived.inflowClass === 'High' ? 'Favorable' : derived.inflowClass === 'Flood/Turbid' ? 'Unfavorable' : 'Neutral' },
       { name: 'Moon Phase',    value: `${astro.moonPhase} · ${astro.moonIllumination}%`, status: astro.moonPhase === 'Full Moon' || astro.moonPhase === 'New Moon' ? 'Favorable' : 'Neutral' },
       { name: 'Solunar',       value: solunarStatus(astro.solunarPeriods, new Date()), status: solunarStatus(astro.solunarPeriods, new Date()) === 'Major' ? 'Favorable' : 'Neutral' },
     ];
@@ -178,7 +178,7 @@ export default function App() {
   return (
     <div className="min-h-screen text-body">
       {/* Header */}
-      <header className="px-4 sm:px-6 pt-5 pb-3 border-b border-edge bg-bg/80 backdrop-blur sticky top-0 z-20">
+      <header className="px-4 sm:px-6 pb-3 border-b border-edge bg-bg/80 backdrop-blur sticky top-0 z-20 pt-[calc(1.25rem+env(safe-area-inset-top))]">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-baseline justify-between flex-wrap gap-2 mb-3">
             <div className="flex items-center gap-3 flex-wrap">

@@ -5,6 +5,12 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 // generation/current/turbidity proxy for the lake; gauge height is 00065. Not
 // every lake has a below-dam gauge — when usgsSite is null this hook simply
 // reports no data and the scoring engine assumes Normal inflow.
+//
+// NOTE: some below-dam gauges also publish water temperature (param 00010),
+// but do NOT use it as the lake's water temp — it measures the TAILRACE, which
+// on deep reservoirs is hypolimnetic (bottom-of-lake) release water. Lanier's
+// gauge reads ~50°F in July while the lake surface is ~80°F. The app's
+// air-temp-derived estimate is the right model for the lake itself.
 function buildUrl(site) {
   return 'https://waterservices.usgs.gov/nwis/iv/'
     + `?format=json&sites=${site}&parameterCd=00060,00065&siteStatus=active`;
@@ -21,9 +27,11 @@ export function useGauge(usgsSite) {
 
   const fetchGauge = useCallback(async () => {
     if (!usgsSite) {
-      // No below-dam gauge configured for this lake — nothing to fetch.
+      // No below-dam gauge configured for this lake — nothing to fetch, and
+      // clear any timestamp left over from a previously selected lake.
       setData(null);
       setError(null);
+      setLastUpdated(null);
       setLoading(false);
       return;
     }

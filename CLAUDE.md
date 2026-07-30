@@ -15,14 +15,20 @@ re-targets to that lake and the choice is remembered per device (localStorage).
 - **React 18 + Vite**, Tailwind CSS, Recharts.
 - Deployed on **Vercel** — auto-deploys from `main`; every PR gets a preview URL.
   `vercel.json` and `netlify.toml` are both committed.
-- All data sources are **free and keyless**; there is no backend.
+- Weather/gauge/astronomy data are **free and keyless**. The one server-side
+  piece is `api/guide.js` (Vercel Edge Function) which proxies "Ask the guide"
+  to the Anthropic API — set `ANTHROPIC_API_KEY` in the Vercel env; without it
+  the panel gracefully falls back to canned summaries.
+- **iOS app**: a Capacitor (SPM, no CocoaPods) wrapper in `ios/`. See
+  `APP_STORE.md` for the build/submit workflow. After changing web code:
+  `npm run build && npx cap sync ios`.
 
 ## Run
 
 ```bash
 npm install
 npm run dev      # http://localhost:5173
-npm run build    # outputs dist/
+npm run build    # outputs dist/ (vendor/charts split via manualChunks)
 ```
 
 ## Architecture — data-driven by a lake registry
@@ -47,9 +53,9 @@ changes are needed. That is the core design.
   `scoreEngine`. Catfish is an inverted model (warm water, night, dam current
   *raise* the score).
 - **`src/services/anthropicService.js`** — the "Ask the guide" panel. Lake-aware
-  (prompt + fallback reference the selected lake). Live streaming needs a
-  server-side proxy for the Anthropic API on a static host (browser CORS is
-  blocked); otherwise it renders a static fallback.
+  (prompt + fallback reference the selected lake). Streams via the `/api/guide`
+  Edge Function proxy (`api/guide.js`, model `claude-sonnet-5`); when the proxy
+  is absent (plain `vite dev`) or unconfigured, it renders a static fallback.
 
 ## The 12 seeded lakes
 
@@ -57,13 +63,21 @@ Lanier, Hartwell, Clarks Hill (J. Strom Thurmond), West Point, Allatoona,
 Oconee, Sinclair, Walter F. George (Eufaula), Seminole, Blackshear, Jackson,
 Carters.
 
-- **Lake Oconee has no below-dam gauge** (`usgsSite: null`) — Wallace Dam
-  discharges through a tailrace directly into Lake Sinclair, so there is no
-  river gauge. This is expected and handled gracefully.
-- **Gauge caveat:** USGS site numbers were verified against USGS
-  monitoring-location pages and live third-party mirrors. Two are worth a
-  one-time sanity check that they return live discharge on the deployed host:
-  **Hartwell (`02187020`)** and **Blackshear (`02350330`)**.
+- **Two lakes have no below-dam gauge** (`usgsSite: null`), which is expected
+  and handled gracefully (engine assumes Normal inflow):
+  - **Oconee** — Wallace Dam discharges through a tailrace directly into Lake
+    Sinclair; no river gauge exists.
+  - **Hartwell** — its tailwater is Lake Russell's pool; NWIS has no active
+    below-dam discharge gauge (02187010 is a lake-level station).
+- All other site numbers were **verified live against the NWIS IV API**
+  (2026-07-30): each returns current `00060` discharge. Notable choices:
+  Clarks Hill uses `02197000` (Savannah at Augusta, ~20 mi below Thurmond),
+  West Point uses `02339500` (the `02339402` below-dam station is stage-only),
+  Sinclair `02223000`, Blackshear `02350512`.
+- **Do NOT use gauge water temperature (param 00010) as lake water temp.**
+  Below-dam gauges measure the tailrace, which on deep reservoirs is
+  hypolimnetic release water — Lanier's gauge reads ~50°F in July while the
+  lake surface is ~80°F. Keep the air-temp-derived estimate.
 
 ## Theme — University of Georgia colors
 
@@ -87,9 +101,17 @@ Near-black background with **Bulldog red (`#ba0c2f`)** as the accent.
   (shallow-lake model, ±4°F) and shown with a `~` prefix — there is no live
   water-temp feed.
 
+## Icons & branding assets
+
+- Master icon artwork is `public/icon.svg`. Rasterize web PNGs with
+  `node scripts/generate-icons.mjs`; iOS icons/splash come from `assets/` via
+  `npx @capacitor/assets generate --ios` (see `APP_STORE.md`).
+
 ## Conventions
 
 - Match the existing code style; components are function components with hooks.
 - When adding a lake, verify the `usgsSite` returns discharge (`00060`) at
-  waterdata.usgs.gov, or set it to `null`.
+  waterdata.usgs.gov (or via the NWIS IV API), or set it to `null`.
+- The sticky header pads with `env(safe-area-inset-top)` for the iPhone
+  Dynamic Island — keep that when restyling the header.
 - Keep the Eufaula app out of this repo.

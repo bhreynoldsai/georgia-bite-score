@@ -1,6 +1,8 @@
 // Anthropic AI explanation service. Uses streaming via fetch + ReadableStream.
-// In a Claude artifact context the request is proxied; outside that context it
-// will fail CORS and we render a static fallback based on the score bucket.
+// Calls our own /api/guide serverless proxy (see api/guide.js) which holds the
+// API key and relays Anthropic's SSE stream. When the proxy is absent (local
+// dev without `vercel dev`) or unconfigured, the request fails and we render a
+// static fallback based on the score bucket.
 
 function buildSystemPrompt(lakeName, dam) {
   const name = lakeName || 'this Georgia reservoir';
@@ -65,17 +67,11 @@ export async function streamExplanation(args, onToken, signal) {
   }, 15000);
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/guide', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       signal,
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userMessage }],
-        stream: true,
-      }),
+      body: JSON.stringify({ system: systemPrompt, user: userMessage }),
     });
     if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
 
