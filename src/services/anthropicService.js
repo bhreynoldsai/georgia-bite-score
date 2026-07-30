@@ -3,6 +3,15 @@
 // API key and relays Anthropic's SSE stream. When the proxy is absent (local
 // dev without `vercel dev`) or unconfigured, the request fails and we render a
 // static fallback based on the score bucket.
+//
+// In the Capacitor iOS app the page is served from capacitor://localhost, where
+// a relative /api/guide would hit the bundled SPA (which returns index.html
+// with HTTP 200 for unknown paths) — so native builds call the deployed proxy
+// absolutely, and we reject any response that isn't an SSE stream.
+const GUIDE_ENDPOINT =
+  typeof window !== 'undefined' && !/^https?:$/.test(window.location.protocol)
+    ? 'https://georgia-bite-score.vercel.app/api/guide'
+    : '/api/guide';
 
 function buildSystemPrompt(lakeName, dam) {
   const name = lakeName || 'this Georgia reservoir';
@@ -67,13 +76,18 @@ export async function streamExplanation(args, onToken, signal) {
   }, 15000);
 
   try {
-    const res = await fetch('/api/guide', {
+    const res = await fetch(GUIDE_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       signal,
       body: JSON.stringify({ system: systemPrompt, user: userMessage }),
     });
     if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+    // Guard against SPA fallbacks that answer 200 with HTML instead of a stream.
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('text/event-stream')) {
+      throw new Error(`unexpected content-type: ${contentType || 'none'}`);
+    }
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder();

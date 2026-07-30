@@ -12,7 +12,19 @@ export const config = { runtime: 'edge' };
 
 const MAX_FIELD_CHARS = 6000;
 
+// The Capacitor iOS app calls this endpoint from the capacitor://localhost
+// origin, so CORS headers are required (the request carries no credentials or
+// secrets, so a wildcard origin is safe).
+const CORS = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'POST, OPTIONS',
+  'access-control-allow-headers': 'content-type',
+};
+
 export default async function handler(req) {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS });
+  }
   if (req.method !== 'POST') {
     return json({ error: 'method not allowed' }, 405);
   }
@@ -60,6 +72,7 @@ export default async function handler(req) {
 
   return new Response(upstream.body, {
     headers: {
+      ...CORS,
       'content-type': 'text/event-stream; charset=utf-8',
       'cache-control': 'no-cache, no-transform',
     },
@@ -69,6 +82,6 @@ export default async function handler(req) {
 function json(obj, status) {
   return new Response(JSON.stringify(obj), {
     status,
-    headers: { 'content-type': 'application/json' },
+    headers: { ...CORS, 'content-type': 'application/json' },
   });
 }
