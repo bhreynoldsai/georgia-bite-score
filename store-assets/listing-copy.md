@@ -15,7 +15,7 @@ Know before you go. Live bite scores for bass, crappie, and catfish on 12 Georgi
 
 Stop guessing whether today is worth the gas money.
 
-Georgia Bite Score reads live weather, barometric pressure, moon phase, solunar periods, and USGS river-gauge data, then turns all of it into one number from 0 to 100 for each species — so you can tell at a glance whether the fish are likely to eat.
+Georgia Bite reads live weather, barometric pressure, moon phase, solunar periods, and USGS river-gauge data, then turns all of it into one number from 0 to 100 for each species — so you can tell at a glance whether the fish are likely to eat.
 
 WHAT YOU GET
 

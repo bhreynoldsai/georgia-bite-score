@@ -1,6 +1,6 @@
 {
-  "name": "Georgia Bite Score",
-  "short_name": "Bite Score",
+  "name": "Georgia Bite",
+  "short_name": "Georgia Bite",
   "description": "Real-time, species-specific fishing bite scores for the major Georgia reservoirs.",
   "start_url": "/",
   "display": "standalone",
