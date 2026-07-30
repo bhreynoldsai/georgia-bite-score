@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: radial-gradient(1200px 600px at 50% -200px, #122544 0%, #0a1628 60%);
+  min-height: 100vh;
+}
+
+/* Custom scrollbar for the solunar timeline */
+.timeline-scroll::-webkit-scrollbar { height: 6px; }
+.timeline-scroll::-webkit-scrollbar-track { background: #0a1628; }
+.timeline-scroll::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 3px; }
+
+/* Token-by-token AI explanation reveal */
+.stream-token {
+  opacity: 0;
+  animation: fadeIn 180ms ease-out forwards;
+}
