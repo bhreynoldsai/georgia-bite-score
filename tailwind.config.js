@@ -4,12 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: '#0a1628',
-        surface: '#111f38',
-        edge: '#1e3a5f',
-        body: '#94afd4',
-        heading: '#e2eaf7',
-        accent: '#0ed2d2',
+        // UGA palette — Bulldog red on black.
+        bg: '#0b0b0d',
+        surface: '#161217',
+        edge: '#3d2328',
+        body: '#c9ccd1',
+        heading: '#f5f5f7',
+        accent: '#ba0c2f',
         largemouth: '#16a34a',
         largemouthDark: '#14532d',
         crappie: '#9333ea',

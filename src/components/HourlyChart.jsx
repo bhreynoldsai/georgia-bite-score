@@ -39,21 +39,21 @@ export default function HourlyChart({ scores, currentHour, species }) {
           <BarChart data={data} margin={{ top: 18, right: 4, left: -20, bottom: 0 }}>
             <XAxis
               dataKey="hour"
-              tick={{ fill: '#94afd4', fontSize: 10 }}
+              tick={{ fill: '#c9ccd1', fontSize: 10 }}
               interval={1}
-              axisLine={{ stroke: '#1e3a5f' }}
+              axisLine={{ stroke: '#3d2328' }}
               tickLine={false}
             />
             <YAxis
               domain={[0, 100]}
-              tick={{ fill: '#94afd4', fontSize: 10 }}
-              axisLine={{ stroke: '#1e3a5f' }}
+              tick={{ fill: '#c9ccd1', fontSize: 10 }}
+              axisLine={{ stroke: '#3d2328' }}
               tickLine={false}
             />
             <Tooltip
-              contentStyle={{ background: '#0a1628', border: '1px solid #1e3a5f', borderRadius: 6, color: '#e2eaf7', fontSize: 12 }}
-              labelStyle={{ color: '#94afd4' }}
-              cursor={{ fill: 'rgba(14,210,210,0.08)' }}
+              contentStyle={{ background: '#0b0b0d', border: '1px solid #3d2328', borderRadius: 6, color: '#f5f5f7', fontSize: 12 }}
+              labelStyle={{ color: '#c9ccd1' }}
+              cursor={{ fill: 'rgba(186,12,47,0.08)' }}
               formatter={(v) => [`${v}`, 'Score']}
             />
             <Bar dataKey="score" radius={[3, 3, 0, 0]}>

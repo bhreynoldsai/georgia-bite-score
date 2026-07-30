@@ -78,13 +78,13 @@ export default function SpeciesCard({ species, scoreData, onExplain, delay = 0 }
           <text
             x="80" y="86" textAnchor="middle"
             className="font-display"
-            style={{ fontFamily: 'Oswald, sans-serif', fontSize: '44px', fontWeight: 700, fill: '#e2eaf7' }}
+            style={{ fontFamily: 'Oswald, sans-serif', fontSize: '44px', fontWeight: 700, fill: '#f5f5f7' }}
           >
             {displayedScore}
           </text>
           <text
             x="80" y="108" textAnchor="middle"
-            style={{ fontFamily: 'Inter, sans-serif', fontSize: '10px', fill: '#94afd4', letterSpacing: '0.18em' }}
+            style={{ fontFamily: 'Inter, sans-serif', fontSize: '10px', fill: '#c9ccd1', letterSpacing: '0.18em' }}
           >
             BITE SCORE
           </text>

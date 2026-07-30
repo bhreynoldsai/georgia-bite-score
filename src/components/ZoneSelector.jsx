@@ -21,7 +21,7 @@ export default function ZoneSelector({ value, onChange, zones = DEFAULT_ZONES })
             className={[
               'px-3 py-1.5 rounded-md text-sm font-medium border transition',
               selected
-                ? 'bg-accent text-bg border-accent shadow-[0_0_18px_rgba(14,210,210,0.35)]'
+                ? 'bg-accent text-bg border-accent shadow-[0_0_18px_rgba(186,12,47,0.35)]'
                 : 'bg-surface text-body border-edge hover:border-accent/60',
             ].join(' ')}
           >
