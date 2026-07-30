@@ -64,8 +64,8 @@ straight to App Store Connect. Both use `method: app-store-connect`.
 - **Screenshots**: `store-assets/screenshots/` holds three 1320×2868 (6.9")
   captures — dashboard, guide panel, outlook. That size is the only iPhone set
   Apple requires; it scales them for smaller devices.
-- **App icon**: `public/icon-1024.png` (1024×1024, no alpha) for the ASC
-  listing.
+- **App icon**: `store-assets/app-icon-1024.png` (1024×1024, alpha removed —
+  `public/icon-1024.png` has an alpha channel and App Store Connect rejects it).
 
 ## Guideline 4.2 ("minimum functionality") risk
 
