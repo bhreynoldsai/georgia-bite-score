@@ -3,7 +3,7 @@
   "appName": "Georgia Bites",
   "webDir": "dist",
   "ios": {
-    "contentInset": "always",
+    "contentInset": "never",
     "backgroundColor": "#0b0b0d"
   }
 }

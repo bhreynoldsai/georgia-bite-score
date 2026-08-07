@@ -209,7 +209,9 @@ export default function App() {
         </div>
       )}
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-5 flex flex-col gap-5">
+      {/* Bottom padding clears the iPhone home indicator — the native shell runs
+          with contentInset "never", so the safe area is ours to handle in CSS. */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] flex flex-col gap-5">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <ZoneSelector value={zone} onChange={setZone} />
           <div className="text-xs text-body/60">
