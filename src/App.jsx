@@ -15,6 +15,7 @@ import BiteScoreDashboard from './components/BiteScoreDashboard.jsx';
 import SolunarTimeline from './components/SolunarTimeline.jsx';
 import BiteExplanation from './components/BiteExplanation.jsx';
 import GuideAvatar from './components/GuideAvatar.jsx';
+import FishMark from './components/FishMark.jsx';
 import { getLake, DEFAULT_LAKE_ID } from './lakes.js';
 
 const SPECIES_NAMES = { largemouth: 'Largemouth Bass', crappie: 'Crappie', catfish: 'Catfish' };
@@ -183,9 +184,12 @@ export default function App() {
           <div className="flex items-baseline justify-between flex-wrap gap-2 mb-3">
             <div className="flex items-center gap-3 flex-wrap">
               <GuideAvatar size={72} hideIfMissing />
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-heading uppercase tracking-wider">
-                Georgia <span className="text-accent">Bites</span>
-              </h1>
+              <div className="flex items-center gap-2.5">
+                <FishMark className="h-6 sm:h-7 text-accent" />
+                <h1 className="font-display text-2xl sm:text-3xl font-bold text-heading uppercase tracking-wider">
+                  Georgia <span className="text-accent">Bites</span>
+                </h1>
+              </div>
               <LakeSelector value={lakeId} onChange={setLakeId} />
             </div>
             <div className="text-xs text-body/70">
