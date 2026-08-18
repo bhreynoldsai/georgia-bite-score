@@ -67,17 +67,36 @@ straight to App Store Connect. Both use `method: app-store-connect`.
 - **App icon**: `store-assets/app-icon-1024.png` (1024×1024, alpha removed —
   `public/icon-1024.png` has an alpha channel and App Store Connect rejects it).
 
-## Guideline 4.2 ("minimum functionality") risk
+## Guideline 4.2 ("minimum functionality") — rejected 2026-08-13, addressed 2026-08-18
 
-Apple rejects thin website wrappers. Mitigations to consider before or after
-first submission:
+1.0 was **rejected** under 4.2: "the app primarily offers content for users to
+view or use, but there isn't enough of this content." Fair — v1.0 was one lake,
+one dashboard, nothing persisted.
 
-- The app already works offline-degraded and is purpose-built (not a repackaged
-  marketing site), which helps.
-- Stronger native hooks worth adding: home-screen widget with today's top bite
-  window, push notification when a species hits "Excellent", or offline caching
-  of the last-fetched scores. Capacitor plugins (`@capacitor/push-notifications`,
-  `@capacitor/preferences`) cover most of this.
+Fix: three new tabs (see CLAUDE.md's "Tabs" section for implementation detail):
+
+- **Compare Lakes** — ranks all 12 lakes by score, not one at a time.
+- **7-Day Planner** — forward-looking trip planning, not just "right now."
+- **Catch Log** — on-device, user-generated data the app stores and surfaces
+  back. This is the strongest of the three against a 4.2 argument.
+
+Before resubmitting:
+
+- [ ] Bump `CURRENT_PROJECT_VERSION` (build number) in
+      `ios/App/App.xcodeproj/project.pbxproj` — same 1.0 marketing version, new
+      build.
+- [ ] Reshoot `store-assets/screenshots/` to show at least one of the new tabs
+      (Compare or Planner reads best in a thumbnail — Catch Log needs seeded
+      data to not look empty).
+- [ ] In App Store Connect, reply to the rejection message summarizing what was
+      added before resubmitting — reviewers read that thread.
+- [ ] Re-test on the reviewer's device class if possible (iPad Air 11" was the
+      review device — confirm the tab bar and grids don't look sparse or
+      cramped at that aspect ratio, not just iPhone).
+
+Further hardening if it comes back again: a home-screen widget with today's top
+bite window, or a local notification when a saved lake crosses "Excellent"
+(`@capacitor/push-notifications` covers the latter without a server).
 
 ## Review checklist
 
@@ -85,3 +104,4 @@ first submission:
 - [ ] Verify the guide panel: with `ANTHROPIC_API_KEY` set the panel streams; without it the fallback text renders (never an error state).
 - [ ] Screenshots: 6.7" and 6.1" iPhone sizes minimum, dark UI renders well.
 - [ ] Confirm `vercel.json` deployment is live — the wrapped app loads the bundled `dist/`, but the guide proxy needs the Vercel deployment.
+- [ ] Click through all four tabs (Today / Compare Lakes / 7-Day Planner / Catch Log) on-device before archiving.

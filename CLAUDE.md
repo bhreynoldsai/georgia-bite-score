@@ -57,6 +57,32 @@ changes are needed. That is the core design.
   Edge Function proxy (`api/guide.js`, model `claude-sonnet-5`); when the proxy
   is absent (plain `vite dev`) or unconfigured, it renders a static fallback.
 
+## Tabs (added post-4.2-rejection)
+
+Apple rejected 1.0 under **Guideline 4.2 (Minimum Functionality)** — a single
+lake/single-view dashboard read as "content to view" rather than a tool. `App.jsx`
+now holds a `view` tab state (`today` | `compare` | `planner` | `log`):
+
+- **Compare Lakes** (`CompareView.jsx` + `useAllLakesConditions.js`) — ranks all
+  12 lakes by current score for a chosen species. Fetches conditions for every
+  lake in **two batched requests** (one Open-Meteo call with comma-separated
+  lat/lon lists, one USGS call with comma-separated `sites`) rather than 12
+  separate per-lake fetches. Tapping a row jumps to Today with that lake selected.
+- **7-Day Planner** (`PlannerView.jsx` + `usePlannerForecast.js` +
+  `projectDailyOutlook` in `scoreEngine.js`) — extends the existing hourly
+  projection to 7 days for the selected lake, finding each species' peak-scoring
+  hour per day. Uses its own `forecast_days=7` fetch (separate from `useWeather`,
+  which stays on `forecast_days=2` for the Today tab) so the week of hourly data
+  is only fetched while this tab is open. `inflowClass` is held constant across
+  the week — USGS has no discharge forecast.
+- **Catch Log** (`CatchLogView.jsx` + `src/utils/catchLog.js`) — on-device catch
+  history (species, lake, size, lure, notes), persisted to `localStorage`
+  (`georgia-bites-catch-log`), independent of any account or server. When the
+  logged lake matches the currently selected lake, the entry snapshots that
+  moment's bite score/label/zone/water temp. This is the strongest lever against
+  4.2 — it's user-generated data the app stores and surfaces back, not just
+  content to view.
+
 ## The 12 seeded lakes
 
 Lanier, Hartwell, Clarks Hill (J. Strom Thurmond), West Point, Allatoona,

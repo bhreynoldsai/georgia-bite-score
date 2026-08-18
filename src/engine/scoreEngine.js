@@ -4,7 +4,8 @@
 import { scoreLargemouth } from './largemouthScore.js';
 import { scoreCrappie } from './crappieScore.js';
 import { scoreCatfish } from './catfishScore.js';
-import { classifySolunar } from '../utils/solunar.js';
+import { classifySolunar, solunarPeriods } from '../utils/solunar.js';
+import { sunTimes, moonPhase } from '../utils/astronomy.js';
 
 // Discharge classes for the Chattahoochee below Walter F. George Dam
 // (USGS 02343801). Baseline flows here run far higher than a headwater gauge —
@@ -159,6 +160,60 @@ export function projectHourly({
     out.largemouth.push(s.largemouth.score);
     out.crappie.push(s.crappie.score);
     out.catfish.push(s.catfish.score);
+  }
+  return out;
+}
+
+// Multi-day outlook for the trip planner: for each of the next `days` calendar
+// days, finds each species' peak-scoring hour. Sun/moon/solunar are recomputed
+// per day (they shift daily); inflowClass is held constant since USGS has no
+// discharge forecast — a reasonable approximation over a 7-day window.
+export function projectDailyOutlook({ weather, zone, lat, lon, inflowClass, days = 7 }) {
+  if (!weather || !weather.hourly) return [];
+  const { time, temperature_2m, surface_pressure, windspeed_10m, cloudcover, precipitation } = weather.hourly;
+
+  const today = new Date();
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const out = [];
+
+  for (let d = 0; d < days; d++) {
+    const dayDate = new Date(todayStart.getFullYear(), todayStart.getMonth(), todayStart.getDate() + d);
+    const dayStr = `${dayDate.getFullYear()}-${pad(dayDate.getMonth() + 1)}-${pad(dayDate.getDate())}`;
+    const sun = sunTimes(dayDate, lat, lon);
+    const moon = moonPhase(dayDate);
+    const periods = solunarPeriods(dayDate, lat, lon);
+
+    const peaks = { largemouth: null, crappie: null, catfish: null };
+
+    for (let hh = 0; hh < 24; hh++) {
+      const i = time.indexOf(`${dayStr}T${pad(hh)}:00`);
+      if (i < 0) continue;
+
+      const at = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), hh);
+      const airTemp = temperature_2m[i];
+      const pressure = surface_pressure[i];
+      const pressure3hAgo = i >= 3 ? surface_pressure[i - 3] : pressure;
+      const wind = windspeed_10m[i];
+      const clouds = cloudcover[i];
+      const precip = precipitation[i] ?? 0;
+      const waterTemp = estimateWaterTemp(temperature_2m, i);
+
+      const conditions = buildConditions({
+        at, zone, waterTemp, airTemp, pressure, pressure3hAgo, wind, windDir: '',
+        clouds, precip, sunrise: sun.sunrise, sunset: sun.sunset,
+        moonPhase: moon.name, moonIllumination: moon.illumination,
+        solunarPeriods: periods, inflowClass,
+      });
+      const s = scoreAll(conditions);
+      for (const species of ['largemouth', 'crappie', 'catfish']) {
+        const sc = s[species];
+        if (!peaks[species] || sc.score > peaks[species].score) {
+          peaks[species] = { score: sc.score, label: sc.label, color: sc.color, hour: hh };
+        }
+      }
+    }
+
+    out.push({ date: dayDate, peaks });
   }
   return out;
 }

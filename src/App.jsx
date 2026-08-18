@@ -16,7 +16,17 @@ import SolunarTimeline from './components/SolunarTimeline.jsx';
 import BiteExplanation from './components/BiteExplanation.jsx';
 import GuideAvatar from './components/GuideAvatar.jsx';
 import FishMark from './components/FishMark.jsx';
+import CompareView from './components/CompareView.jsx';
+import PlannerView from './components/PlannerView.jsx';
+import CatchLogView from './components/CatchLogView.jsx';
 import { getLake, DEFAULT_LAKE_ID } from './lakes.js';
+
+const TABS = [
+  { id: 'today',   label: 'Today' },
+  { id: 'compare', label: 'Compare Lakes' },
+  { id: 'planner', label: '7-Day Planner' },
+  { id: 'log',     label: 'Catch Log' },
+];
 
 const SPECIES_NAMES = { largemouth: 'Largemouth Bass', crappie: 'Crappie', catfish: 'Catfish' };
 const ZONE_NAMES = Object.fromEntries(DEFAULT_ZONES.map((z) => [z.id, z.label]));
@@ -35,11 +45,17 @@ function loadInitialLake() {
 export default function App() {
   const [lakeId, setLakeId] = useState(loadInitialLake);
   const lake = getLake(lakeId);
+  const [view, setView] = useState('today');
 
   const weather = useWeather(lake.lat, lake.lon, lake.timezone);
   const gauge = useGauge(lake.usgsSite);
   const astro = useAstronomy(lake.lat, lake.lon);
   const [zone, setZone] = useState('mid');
+
+  function jumpToLake(id) {
+    setLakeId(id);
+    setView('today');
+  }
 
   // Persist the chosen lake so it reopens where the angler left off.
   useEffect(() => {
@@ -200,9 +216,29 @@ export default function App() {
           </div>
           <ConditionsBar summary={summary} />
         </div>
+        <nav className="max-w-6xl mx-auto flex gap-2 mt-3 overflow-x-auto" aria-label="View">
+          {TABS.map((t) => {
+            const selected = view === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setView(t.id)}
+                aria-pressed={selected}
+                className={[
+                  'px-3 py-1.5 rounded-md text-sm font-medium border transition whitespace-nowrap',
+                  selected
+                    ? 'bg-accent text-bg border-accent shadow-[0_0_18px_rgba(186,12,47,0.35)]'
+                    : 'bg-surface text-body border-edge hover:border-accent/60',
+                ].join(' ')}
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </nav>
       </header>
 
-      {(weather.error || gauge.error) && (
+      {view === 'today' && (weather.error || gauge.error) && (
         <div className="bg-amber-500/15 border-b border-amber-500/40 text-amber-200 text-sm px-4 py-2 text-center">
           {weather.error && <>Weather data unavailable — scores estimated from available data. </>}
           {gauge.error && <>River gauge unavailable — inflow assumed Normal.</>}
@@ -212,27 +248,52 @@ export default function App() {
       {/* Bottom padding clears the iPhone home indicator — the native shell runs
           with contentInset "never", so the safe area is ours to handle in CSS. */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] flex flex-col gap-5">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <ZoneSelector value={zone} onChange={setZone} />
-          <div className="text-xs text-body/60">
-            Auto-refresh: weather 30m · gauge 15m · scores 5m
+        {(view === 'today' || view === 'planner') && (
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <ZoneSelector value={zone} onChange={setZone} />
+            {view === 'today' && (
+              <div className="text-xs text-body/60">
+                Auto-refresh: weather 30m · gauge 15m · scores 5m
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
-        <BiteScoreDashboard
-          scores={scores}
-          hourly={hourly}
-          currentHour={currentHour}
-          onExplain={setExplainSpecies}
-        />
+        {view === 'today' && (
+          <>
+            <BiteScoreDashboard
+              scores={scores}
+              hourly={hourly}
+              currentHour={currentHour}
+              onExplain={setExplainSpecies}
+            />
 
-        <SolunarTimeline astronomy={astro} />
+            <SolunarTimeline astronomy={astro} />
 
-        <LiveDataFeeds
-          rows={liveRows}
-          lastWeather={weather.lastUpdated}
-          lastGauge={gauge.lastUpdated}
-        />
+            <LiveDataFeeds
+              rows={liveRows}
+              lastWeather={weather.lastUpdated}
+              lastGauge={gauge.lastUpdated}
+            />
+          </>
+        )}
+
+        {view === 'compare' && (
+          <CompareView zone={zone} currentLakeId={lakeId} onPickLake={jumpToLake} />
+        )}
+
+        {view === 'planner' && (
+          <PlannerView lake={lake} zone={zone} inflowClass={derived?.inflowClass || 'Normal'} />
+        )}
+
+        {view === 'log' && (
+          <CatchLogView
+            currentLakeId={lakeId}
+            currentZone={zone}
+            currentScores={scores}
+            currentWaterTemp={derived?.waterTemp}
+          />
+        )}
 
         <footer className="text-center text-xs text-body/50 py-4">
           {lake.name} · {lake.dam} ({lake.river})
