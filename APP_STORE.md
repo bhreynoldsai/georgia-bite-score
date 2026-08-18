@@ -82,14 +82,21 @@ Fix: three new tabs (see CLAUDE.md's "Tabs" section for implementation detail):
 
 Before resubmitting:
 
-- [ ] Bump `CURRENT_PROJECT_VERSION` (build number) in
-      `ios/App/App.xcodeproj/project.pbxproj` — same 1.0 marketing version, new
-      build.
-- [ ] Reshoot `store-assets/screenshots/` to show at least one of the new tabs
-      (Compare or Planner reads best in a thumbnail — Catch Log needs seeded
-      data to not look empty).
-- [ ] In App Store Connect, reply to the rejection message summarizing what was
-      added before resubmitting — reviewers read that thread.
+- [x] Bump `CURRENT_PROJECT_VERSION` (build number) — now `4`.
+- [x] Archive + upload build 4 to App Store Connect (headless, via `xcodebuild`
+      — see the archive/upload commands above; upload succeeded 2026-08-18).
+- [x] Reshoot screenshots — `iphone-6.9-05-compare.png`,
+      `-06-planner.png`, `-07-catchlog.png` added (captured on an iPhone 17 Pro
+      Max simulator, native 1320×2868, Catch Log seeded with two sample entries
+      so it doesn't read empty). The old `01`–`04` set still shows the
+      single-lake dashboard only — swap those in as the primary set in App
+      Store Connect, or at minimum insert 05–07 among the first few so a
+      reviewer scrolling thumbnails sees the new tabs early.
+- [ ] In App Store Connect: attach build 4 to the 1.0 version, upload/reorder
+      the new screenshots, and reply to the rejection message summarizing what
+      was added — reviewers read that thread. (Needs your Apple ID login —
+      not something that can be done headlessly.)
+- [ ] Resubmit for review.
 - [ ] Re-test on the reviewer's device class if possible (iPad Air 11" was the
       review device — confirm the tab bar and grids don't look sparse or
       cramped at that aspect ratio, not just iPhone).
