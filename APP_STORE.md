@@ -85,13 +85,15 @@ Before resubmitting:
 - [x] Bump `CURRENT_PROJECT_VERSION` (build number) — now `4`.
 - [x] Archive + upload build 4 to App Store Connect (headless, via `xcodebuild`
       — see the archive/upload commands above; upload succeeded 2026-08-18).
-- [x] Reshoot screenshots — `iphone-6.9-05-compare.png`,
-      `-06-planner.png`, `-07-catchlog.png` added (captured on an iPhone 17 Pro
-      Max simulator, native 1320×2868, Catch Log seeded with two sample entries
-      so it doesn't read empty). The old `01`–`04` set still shows the
-      single-lake dashboard only — swap those in as the primary set in App
-      Store Connect, or at minimum insert 05–07 among the first few so a
-      reviewer scrolling thumbnails sees the new tabs early.
+- [x] Reshoot screenshots — `appstore-1284x2778-04-compare.png`,
+      `-05-planner.png`, `-06-catchlog.png` added (captured on an iPhone 13 Pro
+      Max simulator, native 1284×2778 — App Store Connect's screenshot slot for
+      this app only accepts 1242×2688 or 1284×2778, matching the original `01`–
+      `03` set; the 6.9" bucket, 1320×2868, was rejected with "dimensions are
+      wrong" — do not use the `iphone-6.9-*` naming/size again for this app.
+      Catch Log seeded with two sample entries so it doesn't read empty).
+      Upload `04`–`06` alongside or in place of `01`–`03` so a reviewer
+      scrolling thumbnails sees the new tabs early.
 - [ ] In App Store Connect: attach build 4 to the 1.0 version, upload/reorder
       the new screenshots, and reply to the rejection message summarizing what
       was added — reviewers read that thread. (Needs your Apple ID login —
